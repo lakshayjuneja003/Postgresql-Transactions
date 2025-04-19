@@ -19,11 +19,11 @@ app.post("/api/signup" , async (req : Request , res: Response)=>{
         const Insertquery = `INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id`;
         const AddressQuery = 'Insert into address (user_id ,street , city , state , zipcode) VALUES ($1 , $2 , $3 , $4 , $5)';
 
-        await pg.query("BEGIN");
+        await pg.query("BEGIN"); // -- transaction start
         const Insertresponse = await pg.query(Insertquery , [email , password])
         const userId = Insertresponse.rows[0].id;
         const Addressresponse = await pg.query(AddressQuery , [userId , street , city , state , zipcode]);
-        await pg.query("COMMIT");
+        await pg.query("COMMIT"); // -- transaction commit
         // signup successfully
         res.status(201).json({ message: "User created successfully", userId });
         return ;
